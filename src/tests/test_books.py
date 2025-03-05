@@ -13,6 +13,7 @@ async def test_create_book(async_client):
         "author": "Robert Martin",
         "count_pages": 300,
         "year": 2025,
+        "seller_id": 1,
     }
     response = await async_client.post("/api/v1/books/", json=data)
 
@@ -38,6 +39,7 @@ async def test_create_book_with_old_year(async_client):
         "author": "Robert Martin",
         "count_pages": 300,
         "year": 1986,
+        "seller_id": 1,
     }
     response = await async_client.post("/api/v1/books/", json=data)
 
@@ -72,6 +74,7 @@ async def test_get_books(db_session, async_client):
                 "year": 2001,
                 "id": book.id,
                 "pages": 104,
+                "seller_id": 1,
             },
             {
                 "title": "Mziri",
@@ -79,6 +82,7 @@ async def test_get_books(db_session, async_client):
                 "year": 1997,
                 "id": book_2.id,
                 "pages": 104,
+                "seller_id": 1,
             },
         ]
     }
@@ -106,6 +110,7 @@ async def test_get_single_book(db_session, async_client):
         "year": 2001,
         "pages": 104,
         "id": book.id,
+        "seller_id": 1,
     }
 
 
@@ -127,6 +132,7 @@ async def test_update_book(db_session, async_client):
             "pages": 100,
             "year": 2007,
             "id": book.id,
+            "seller_id": 1,
         },
     )
 

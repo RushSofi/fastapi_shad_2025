@@ -45,3 +45,32 @@ Content-Type: application/json
 }
 
 ###
+
+### Создание продавца
+POST http://localhost:8000/api/v1/seller/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "e_mail": "john.doe@example.com",
+    "password": "password123"
+}
+
+### Получение списка продавцов
+GET http://localhost:8000/api/v1/seller/ HTTP/1.1
+
+### Создание книги
+POST http://localhost:8000/api/v1/books/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Clean Architecture",
+    "author": "Robert Martin",
+    "count_pages": 300,
+    "year": 2025,
+    "seller_id": 1
+}
+
+### Получение списка книг
+GET http://localhost:8000/api/v1/books/ HTTP/1.1

@@ -1,11 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from src.models.sellers import Seller
-from src.schemas import IncomingSeller, ReturnedSeller, ReturnedAllSellers
+from src.schemas import (
+    IncomingSeller,
+    ReturnedSeller,
+    ReturnedAllSellers,
+    UpdateSeller,
+)
 from src.configurations import get_async_session
 
-sellers_router = APIRouter(tags=["sellers"], prefix="/api/v1/seller")
+sellers_router = APIRouter(tags=["sellers"], prefix="/seller")
 
 
 # Регистрация продавца
@@ -41,16 +47,22 @@ async def get_seller(seller_id: int, session: AsyncSession = Depends(get_async_s
 @sellers_router.put("/{seller_id}", response_model=ReturnedSeller)
 async def update_seller(
     seller_id: int,
-    new_data: IncomingSeller,
+    new_data: UpdateSeller,
     session: AsyncSession = Depends(get_async_session),
 ):
     seller = await session.get(Seller, seller_id)
     if not seller:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Seller not found")
 
-    seller.first_name = new_data.first_name
-    seller.last_name = new_data.last_name
-    seller.e_mail = new_data.e_mail
+    # Обновляем только те поля, которые переданы в запросе
+    if new_data.first_name is not None:
+        seller.first_name = new_data.first_name
+    if new_data.last_name is not None:
+        seller.last_name = new_data.last_name
+    if new_data.e_mail is not None:
+        seller.e_mail = new_data.e_mail
+    if new_data.password is not None:
+        seller.password = new_data.password
 
     await session.flush()
     return seller
@@ -65,4 +77,3 @@ async def delete_seller(seller_id: int, session: AsyncSession = Depends(get_asyn
 
     await session.delete(seller)
     await session.flush()
-    

@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core import PydanticCustomError
+from typing import Optional 
 
-__all__ = ["IncomingBook", "ReturnedBook", "ReturnedAllbooks"]
+__all__ = ["IncomingBook", "ReturnedBook", "ReturnedAllbooks", "UpdateBook"]
 
 
 # Базовый класс "Книги", содержащий поля, которые есть во всех классах-наследниках.
@@ -36,3 +37,20 @@ class ReturnedBook(BaseBook):
 # Класс для возврата массива объектов "Книга"
 class ReturnedAllbooks(BaseModel):
     books: list[ReturnedBook]
+
+
+# Класс для обновления данных книги
+class UpdateBook(BaseModel):
+    title: Optional[str] = None
+    author: Optional[str] = None
+    year: Optional[int] = None
+    pages: Optional[int] = Field(None, alias="count_pages")  # Учитываем alias
+    seller_id: Optional[int] = None
+
+    @field_validator("year")  # Валидатор для года
+    @staticmethod
+    def validate_year(val: Optional[int]):
+        if val is not None and val < 2020:
+            raise PydanticCustomError("Validation error", "Year is too old!")
+        return val
+    

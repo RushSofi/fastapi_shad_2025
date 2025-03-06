@@ -11,7 +11,7 @@ Content-Type: application/json
 {
     "first_name": "John",
     "last_name": "Doe",
-    "e_mail": "john.doe@example.com",
+    "e_mail": "john.doe8@example.com",
     "password": "password123"
 }
 
@@ -32,7 +32,7 @@ Content-Type: application/json
 }
 
 ### Удаление продавца
-DELETE http://localhost:8000/api/v1/seller/1 HTTP/1.1
+DELETE http://localhost:8000/api/v1/seller/13 HTTP/1.1
 
 ### Создание книги
 POST http://localhost:8000/api/v1/books/ HTTP/1.1
@@ -43,7 +43,7 @@ Content-Type: application/json
     "author": "Robert Martin",
     "count_pages": 300,
     "year": 2025,
-    "seller_id": 1
+    "seller_id": 13
 }
 
 ### Получение списка книг
@@ -59,10 +59,10 @@ Content-Type: application/json
 {
     "title": "Clean Code",
     "author": "Robert Martin",
-    "count_pages": 310,
+    "count_pages": 315,
     "year": 2022,
     "seller_id": 1
 }
 
 ### Удаление книги
-DELETE http://localhost:8000/api/v1/books/1 HTTP/1.1
+DELETE http://localhost:8000/api/v1/books/6 HTTP/1.1

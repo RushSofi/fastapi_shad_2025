@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from src.models.sellers import Seller
+from src.models.books import Book
 from src.schemas import (
     IncomingSeller,
     ReturnedSeller,
@@ -16,22 +17,42 @@ sellers_router = APIRouter(tags=["sellers"], prefix="/seller")
 
 # Регистрация продавца
 @sellers_router.post("/", response_model=ReturnedSeller, status_code=status.HTTP_201_CREATED)
-async def create_seller(
-    seller: IncomingSeller,
-    session: AsyncSession = Depends(get_async_session),
-):
+async def create_seller(seller: IncomingSeller, session: AsyncSession = Depends(get_async_session)):
     new_seller = Seller(**seller.model_dump())
     session.add(new_seller)
     await session.flush()
-    return new_seller
+    return {
+        "id": new_seller.id,
+        "first_name": new_seller.first_name,
+        "last_name": new_seller.last_name,
+        "e_mail": new_seller.e_mail,
+        "books": [], 
+    }
 
 
 # Получение списка продавцов
 @sellers_router.get("/", response_model=ReturnedAllSellers)
 async def get_all_sellers(session: AsyncSession = Depends(get_async_session)):
-    result = await session.execute(select(Seller))
+    query = select(Seller)
+    result = await session.execute(query)
     sellers = result.scalars().all()
-    return {"sellers": sellers}
+
+    sellers_with_books = []
+    for seller in sellers:
+        query = select(Book).where(Book.seller_id == seller.id)
+        result = await session.execute(query)
+        books = result.scalars().all()
+
+        seller_data = {
+            "id": seller.id,
+            "first_name": seller.first_name,
+            "last_name": seller.last_name,
+            "e_mail": seller.e_mail,
+            "books": books,
+        }
+        sellers_with_books.append(seller_data)
+
+    return {"sellers": sellers_with_books}
 
 
 # Получение данных о конкретном продавце
@@ -40,7 +61,18 @@ async def get_seller(seller_id: int, session: AsyncSession = Depends(get_async_s
     seller = await session.get(Seller, seller_id)
     if not seller:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Seller not found")
-    return seller
+
+    query = select(Book).where(Book.seller_id == seller_id)
+    result = await session.execute(query)
+    books = result.scalars().all()
+
+    return {
+        "id": seller.id,
+        "first_name": seller.first_name,
+        "last_name": seller.last_name,
+        "e_mail": seller.e_mail,
+        "books": books,
+    }
 
 
 # Обновление данных продавца
@@ -61,11 +93,18 @@ async def update_seller(
         seller.last_name = new_data.last_name
     if new_data.e_mail is not None:
         seller.e_mail = new_data.e_mail
-    if new_data.password is not None:
-        seller.password = new_data.password
 
-    await session.flush()
-    return seller
+    query = select(Book).where(Book.seller_id == seller_id)
+    result = await session.execute(query)
+    books = result.scalars().all()
+
+    return {
+        "id": seller.id,
+        "first_name": seller.first_name,
+        "last_name": seller.last_name,
+        "e_mail": seller.e_mail,
+        "books": books,
+    }
 
 
 # Удаление продавца
@@ -76,4 +115,4 @@ async def delete_seller(seller_id: int, session: AsyncSession = Depends(get_asyn
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Seller not found")
 
     await session.delete(seller)
-    await session.flush()
+    await session.commit() 

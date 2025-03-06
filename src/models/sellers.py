@@ -14,4 +14,5 @@ class Seller(BaseModel):
     password: Mapped[str] = mapped_column(String(100), nullable=False)
 
     # Связь один-ко-многим с книгами
-    books: Mapped[list["Book"]] = relationship("Book", back_populates="seller")
+    books: Mapped[list["Book"]] = relationship("Book", back_populates="seller", cascade="all, delete-orphan")
+    

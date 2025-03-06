@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional  
+from typing import Optional, List
+from src.schemas.books import ReturnedBook
 
 __all__ = ["BaseSeller", "IncomingSeller", "ReturnedSeller", "ReturnedAllSellers", "UpdateSeller"]
 
@@ -15,6 +16,7 @@ class IncomingSeller(BaseSeller):
 
 class ReturnedSeller(BaseSeller):
     id: int
+    books: List[ReturnedBook] = [] 
 
 
 class ReturnedAllSellers(BaseModel):
@@ -25,4 +27,3 @@ class UpdateSeller(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     e_mail: Optional[EmailStr] = None
-    password: Optional[str] = Field(None, min_length=6)

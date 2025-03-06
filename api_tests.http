@@ -4,44 +4,65 @@
 # Tunder Client не позволяет свободно импортировать-экспортировать записи,
 # поэтому перешел на этот плагин. Он тоже хорош :-)
 
-# Создаем книгу
+### Создание продавца
+POST http://localhost:8000/api/v1/seller/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "first_name": "John",
+    "last_name": "Doe",
+    "e_mail": "john.doe8@example.com",
+    "password": "password123"
+}
+
+### Получение списка продавцов
+GET http://localhost:8000/api/v1/seller/ HTTP/1.1
+
+### Получение данных о конкретном продавце
+GET http://localhost:8000/api/v1/seller/1 HTTP/1.1
+
+### Обновление данных продавца
+PUT http://localhost:8000/api/v1/seller/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "first_name": "John",
+    "last_name": "Smith",
+    "e_mail": "john.smith@example.com"
+}
+
+### Удаление продавца
+DELETE http://localhost:8000/api/v1/seller/13 HTTP/1.1
+
+### Создание книги
 POST http://localhost:8000/api/v1/books/ HTTP/1.1
 Content-Type: application/json
 
 {
     "title": "Clean Architecture",
-    "author": " Robert Martin",
+    "author": "Robert Martin",
     "count_pages": 300,
-    "year": 2025
+    "year": 2025,
+    "seller_id": 13
 }
 
-###
-
-# Получаем список книг
+### Получение списка книг
 GET http://localhost:8000/api/v1/books/ HTTP/1.1
 
-###
-
-# Получаем одну книгу по ее ИД
+### Получение одной книги по ее ИД
 GET http://localhost:8000/api/v1/books/1 HTTP/1.1
 
-###
-
-# Удаляем книгу
-DELETE http://localhost:8000/api/v1/books/1 HTTP/1.1
-
-###
-
-# Обновляем поля в данных о книге
-PUT http://localhost:8000/api/v1/books/2 HTTP/1.1
+### Обновление данных книги
+PUT http://localhost:8000/api/v1/books/1 HTTP/1.1
 Content-Type: application/json
 
 {
-    "id": 5,
     "title": "Clean Code",
     "author": "Robert Martin",
+    "count_pages": 315,
     "year": 2022,
-    "pages": 310
+    "seller_id": 1
 }
 
-###
+### Удаление книги
+DELETE http://localhost:8000/api/v1/books/6 HTTP/1.1
